@@ -1,0 +1,123 @@
+.com_mark_weather.appBody {
+	min-height: 400px;
+	color: #333;
+	text-shadow: 2px 2px 1px #000000;
+}
+
+.com_mark_weather.projector {
+	background-color: black;
+
+	color: #fff;
+	position: relative;
+}
+
+.com_mark_weather img.bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 400px;
+	max-height: 400px;
+	xheight: 400px;
+	opacity: 0.5;
+	z-index: 0;
+
+	
+}
+
+.com_mark_weather > section {
+	position: absolute;
+	z-index: 2;
+	background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 71%,rgba(0,0,0,1) 100%);
+}
+
+.com_mark_weather .rightnow section {
+	text-align: right;
+	padding-right: 10px;
+	min-height: 130px;
+}
+
+.com_mark_weather .rightnow h1 {
+	text-transform: uppercase;
+	font-size: 17px;
+	margin: 0;
+	color: #00A7CE;
+	font-weight: normal;
+}
+
+.com_mark_weather .rightnow h2 {
+	margin: 0;
+	font-size: 75px;
+	font-weight: normal;
+}
+
+.com_mark_weather .rightnow .conditions {
+	margin-top: 10px;
+	margin-right: 34px;/*right align edge to right-most number*/
+}
+
+.com_mark_weather .temp {
+	min-height: 120px;
+}
+
+.com_mark_weather .detail {
+	width: 100%;
+	position: relative;
+	min-height: 120px;
+}
+
+.com_mark_weather .detail table {
+	width: 160px !important;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.com_mark_weather table td,
+.com_mark_weather table th {
+	white-space: nowrap;
+}
+
+.com_mark_weather table td {
+	text-align: right !important;
+}
+
+.com_mark_weather .media-heading {
+	color: #00A7CE;
+	font-weight: normal;
+}
+
+.com_mark_weather .alerts {
+	background-color: red;
+	color: #fff;
+	margin: 0 10px;
+	padding: 3px 8px;
+	border-radius: 3px;
+}
+
+.com_mark_weather .alerts ul {
+	margin: 0;
+}
+
+.com_mark_weather footer {
+	font-size: 11px;
+	color: gray;
+	padding: 10px;
+}
+
+.com_mark_weather .wxicon {
+	background: transparent;
+	background-repeat: no-repeat;
+}
+
+.com_mark_weather .cloudy 	{ background-image: url('./icons/cloudy.png'); }
+.com_mark_weather .snow 	{ background-image: url('./icons/snow.png'); }
+.com_mark_weather .sleet	{ background-image: url('./icons/sleet.png'); }
+.com_mark_weather .clear-day 	{ background-image: url('./icons/clear-day.png'); }
+.com_mark_weather .clear-night 	{ background-image: url('./icons/clear-night.png'); }
+.com_mark_weather .clear 	{ background-image: url('./icons/clear.png'); }
+.com_mark_weather .rain 	{ background-image: url('./icons/rain.png'); }
+.com_mark_weather .partly-cloudy-night 	{ background-image: url('./icons/partly-cloudy-night.png'); }
+.com_mark_weather .partly-cloudy-day 	{ background-image: url('./icons/partly-cloudy-day.png'); }
+
+.com_mark_weather .mostly-cloudy-night 	{ background-image: url('./icons/mostly-cloudy-night.png'); }
+.com_mark_weather .mostly-cloudy-day 	{ background-image: url('./icons/mostly-cloudy-day.png'); }

@@ -1,0 +1,66 @@
+{{! mustache template -- https://github.com/janl/mustache.js }}
+<section>
+	<div class="rightnow">
+		<section class="wxicon {{currently.icon}}">
+			<h1>Right Now</h1>
+			<div class="temp">
+				<h2>{{currently.temperature}}&deg;</h2>
+				<div class="conditions">{{currently.summary}}</div>
+			</div>
+			<div class="detail hide">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<th>Humidity:</th>
+							<td>{{currently.humidity}}%</td>
+						</tr>
+						<tr>
+							<th>Pressure:</th>
+							<td>{{currently.pressure}} mb</td>
+						</tr>
+						<tr>
+							<th>Wind:</th>
+							<td>{{currently.windSpeed}} mph</td>
+						</tr>
+						<tr>
+							<th>Visibility:</th>
+							<td>{{currently.visibility}} mi</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</div>
+
+	{{#hasAlerts}}
+	<div class="alerts">
+		<ul class="unstyled">
+	{{/hasAlerts}}
+	
+		{{#alerts}}
+			<li>{{title}}</li>
+		{{/alerts}}
+	
+	{{#hasAlerts}}
+		</ul>
+	</div>
+	{{/hasAlerts}}
+	
+	<div class="media clearfix">
+		<a class="pull-left" href="#"><img class="media-object" src="{{appPath}}icons/{{hourly.icon}}.png" width="70"></a>
+		<div class="media-body">
+			<h4 class="media-heading">LATER</h4>
+			{{hourly.summary}}
+		</div>
+	</div>
+
+	<div class="media clearfix">
+		<a class="pull-left" href="#"><img class="media-object" src="{{appPath}}icons/{{daily.icon}}.png" width="70"></a>
+		<div class="media-body">
+			<h4 class="media-heading">THIS WEEK</h4>
+			{{daily.summary}}
+		</div>
+	</div>
+
+	<footer>Data by forecast.io</footer>
+</section>
