@@ -85,7 +85,7 @@ F2.Apps["com_mark_weather"] = (function() {
 		var html = Mustache.to_html(template[0], forecast[0]);
 
 		//append it
-		$('div.appBody',this.$root).html(html);
+		$('div.appBody',this.$root).html(html).data('forecast',forecast[0]);
 
 		if (forecast[0].hasAlerts){
 			this.handleWxAlerts(forecast[0]);
@@ -239,7 +239,8 @@ F2.Apps["com_mark_weather"] = (function() {
 			return _ajax('flickr.photos.search',{
 				safe_search: 	1,
 				content_type: 	1,
-				group_id: 		'1579929@N25' //I Love Boulder
+				//group_id: 		'1579929@N25' //I Love Boulder
+				group_id: 		'54342054@N00' //Boulder, Colo group
 				//woe_id: 		'2367231',
 				//place_id: 	'j3ThSq1TUbz4jf.U',
 				//lat: 			'40.015',
@@ -257,45 +258,55 @@ F2.Apps["com_mark_weather"] = (function() {
 				photo_id: rand.id
 			})
 			.done(function(resp){
+				console.log('getPhoto',resp)
+
+				if (resp.stat == 'fail'){
+					return;
+				}
 
 				var sizes = resp.sizes.size;
 
 				//loop over all sizes and extract large one...
 				for (var i = 0, src; i < sizes.length; i++) {
-					if (sizes[i].label == 'Large' && sizes[i].source != null){
+					if (sizes[i].label == 'Medium' && sizes[i].source != null){
 						src = sizes[i].source;
 						break;
 					}
 				};
 
-				//preload
-				var $img = $('<img src="'+src+'" class="bg hide">');
-				$img.insertBefore($('section:first',self.$root));
-
-				$img.load(function(){
-					var $newImg = $('img.bg',self.$root),
-					$body = $('div.appBody > section',self.$root);
-
-					$newImg.fadeIn();
-
-					if ($newImg.height() > $body.outerHeight()){
-						$body.css('height',$newImg.height());
-					}
-
-					var bottom = $newImg.position().top + $newImg.height(); //find bottom of photo
-					var gradientStart = parseInt( (bottom / $body.height()) * 100 );//find bottom of photo in % from top
-					var gradientEnd = 71; //nice magic #
-
-					if (gradientStart <= (gradientEnd + 10)){ //gradientEnd + 10 is a buffer so we don't end up with hard edges in close scenarios
-						gradientEnd = gradientStart - 29;
-					}
-
-					$body.css('background','linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0) '+gradientEnd+'%,rgba(0,0,0,1) '+gradientStart+'%)');
-
-				});
-
+				placePhoto(src);
 				getUserInfo(rand.owner);
 			})
+		}
+
+		var placePhoto = function(src){
+			var $img = $('<img src="'+src+'" class="bg hide">');//preload
+			$img.insertBefore($('section:first',self.$root));
+
+			$img.load(function(){
+				var $newImg = $('img.bg',self.$root),
+					$body = $('div.appBody > section',self.$root),
+					imgHeight = $newImg.height(),
+					bodyHeight = $body.outerHeight();
+
+				$newImg.fadeIn();
+
+				if (imgHeight > bodyHeight){
+					$body.css('height',imgHeight);
+				}
+
+				var bottom = $newImg.position().top + imgHeight; //find bottom of photo
+				var gradientStart = parseInt( (bottom / bodyHeight) * 100 );//find bottom of photo in % from top
+				var GRADIENT_END = 71; //nice magic #
+				var HEIGHT_OF_GRADIENT = 29;
+
+				if (gradientStart <= (GRADIENT_END + 10)){ //GRADIENT_END + 10 is a buffer so we don't end up with hard edges in close scenarios
+					GRADIENT_END = gradientStart - HEIGHT_OF_GRADIENT;
+				}
+
+				$body.css('background','linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0) '+GRADIENT_END+'%,rgba(0,0,0,1) '+gradientStart+'%)');
+
+			});
 		}
 
 		var getUserInfo = function(NSId){
@@ -304,14 +315,81 @@ F2.Apps["com_mark_weather"] = (function() {
 				user_id: NSId
 			})
 			.done(function(resp){
-				//console.log('getUsername AJAX',resp)
-				var user = resp.person.username._content;
+				console.log('getUsername AJAX',NSId,resp)
+				try {
+					var user = resp.person.username._content;
+				} catch(e){
+					console.error('getUsername',e);
+					var user = NSId;
+				}
 				$('footer',self.$root).append(' / photo by ' + user + ' on <strong>flickr</strong>');
 			})
 		}
 
+		var getPhotoFromCurrentConditions = function(){
+			var forecast = $('div.appBody',self.$root).data('forecast');
+			
+			console.log('getPhotoFromCurrentConditions',forecast);
+			
+			var currentIcon = forecast.currently.icon,
+				images = self.PHOTOS,
+				data = {
+					photos: {
+						photo: []
+					}
+				},
+				deferred = new $.Deferred()
+			;
+
+			currentIcon = 'snow';
+
+			console.warn(currentIcon);
+
+			if (images[currentIcon]){
+				data.photos.photo = images[currentIcon];
+			} else {
+				return getGroupPhotos();
+			}
+
+			console.log(data)
+
+			deferred.resolve(data);
+			return deferred.promise();
+		}		
+
+		/** 
+		 * Start chain of deferreds...
+		 *
+		 */
 		console.log('Loading flickr background image...')
-		$.when( getGroupPhotos() ).then( getPhoto );
+		//$.when( getGroupPhotos() ).then( getPhoto );
+		$.when( getPhotoFromCurrentConditions() ).then( getPhoto );
+	};
+
+	App_Class.prototype.PHOTOS = {
+		'snow': [
+			//'http://farm9.staticflickr.com/8110/8638376925_1b96dce9bb.jpg' //http://www.flickr.com/photos/cmoscolors/8638376925/
+			{
+				id: '8638376925',
+				owner: 'cmoscolors'
+			}
+		],
+		'partly-cloudy-day': [
+			{
+				id: '8203547388', //http://www.flickr.com/photos/whltexbread/8203547388/in/pool-54342054@N00/
+				owner: 'whltexbread'
+			}
+		],
+		'rain': [
+			{
+				id: '7711392756',//http://www.flickr.com/photos/8225741@N07/7711392756/in/pool-54342054@N00/
+				owner: '8225741@N07'
+			},
+			{
+				id: '6292925110', //http://www.flickr.com/photos/wickedlilac/6292925110/in/pool-54342054@N00/
+				owner: 'wickedlilac'
+			}
+		]
 	};
 
 	App_Class.prototype._TEMPLATE = function() {
